@@ -21,8 +21,8 @@ jobs:
 
       - name: Sync files to server
         run: |
-            rsync -az --delete --exclude '.git/' --exclude '.env' ./ root@cor-forum.de:/root/corfoum/regnumshop
+            rsync -az --delete --exclude '.git/' --exclude '.env' ./ root@cor-forum.de:/root/corforum/regnumshop
 
       - name: Restart Docker services
         run: |
-          ssh root@cor-forum.de 'cd /root/corfoum/regnumshop && docker compose down && docker compose up -d'
+          ssh root@cor-forum.de 'cd /root/corforum/regnumshop && docker compose down && docker compose up -d'
