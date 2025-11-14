@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: regnumshop-nginx
+    ports:
+      - "1357:80"
+    volumes:
+      - ./:/var/www/html
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+    networks:
+      - regnumshop-network
+
+  php:
+    build: .
+    container_name: regnumshop-php
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - regnumshop-network
+    environment:
+      - PHP_DISPLAY_ERRORS=1
+
+networks:
+  regnumshop-network:
+    driver: bridge

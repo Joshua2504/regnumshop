@@ -1,0 +1,201 @@
+/* Custom styles for Regnum Online Shop */
+
+:root {
+    --primary-color: #0d6efd;
+    --secondary-color: #6c757d;
+    --success-color: #198754;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #0dcaf0;
+    --dark-color: #212529;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* Navbar */
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+/* Cards */
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-img-top {
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Buttons */
+.btn {
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Table */
+.table-responsive {
+    border-radius: 0.25rem;
+    overflow: hidden;
+}
+
+.table thead {
+    background-color: var(--dark-color);
+    color: white;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Badges */
+.badge {
+    padding: 0.5em 0.75em;
+    font-size: 0.875rem;
+}
+
+/* Forms */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Modal */
+.modal-content {
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    background-color: var(--dark-color);
+    color: white;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+
+.modal-header .btn-close {
+    filter: invert(1);
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+}
+
+/* Alerts */
+.alert {
+    border-radius: 0.5rem;
+}
+
+/* Cart badge */
+.navbar-nav .badge {
+    position: relative;
+    top: -2px;
+}
+
+/* Item stock indicator */
+.text-stock-low {
+    color: var(--warning-color);
+}
+
+.text-stock-out {
+    color: var(--danger-color);
+}
+
+/* Admin panel specific styles */
+.admin-sidebar {
+    background-color: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+    min-height: calc(100vh - 56px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card {
+        margin-bottom: 1rem;
+    }
+
+    .table {
+        font-size: 0.875rem;
+    }
+
+    .navbar-brand {
+        font-size: 1.25rem;
+    }
+}
+
+/* Loading spinner */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.2em;
+}
+
+/* Price formatting */
+.price {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: var(--success-color);
+}
+
+/* Order status colors */
+.status-pending {
+    color: var(--warning-color);
+}
+
+.status-processing {
+    color: var(--info-color);
+}
+
+.status-completed {
+    color: var(--success-color);
+}
+
+.status-cancelled {
+    color: var(--danger-color);
+}
+
+/* Image placeholder */
+.img-placeholder {
+    background-color: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
