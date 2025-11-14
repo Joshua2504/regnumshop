@@ -24,26 +24,15 @@ if (!$session->isLoggedIn()) {
 $cart = new Cart();
 $cartItems = $cart->getItems();
 
-// Preserve success info (post/redirect/get)
-$storedSuccess = $session->get('checkout_success');
-if ($storedSuccess) {
-    $success = true;
-    $orderId = $storedSuccess['order_id'];
-    $orderNumber = $storedSuccess['order_number'];
-    $paymentMethod = $storedSuccess['payment_method'];
-    $total = $storedSuccess['total'];
-    $session->remove('checkout_success');
-} else {
-    if (empty($cartItems)) {
-        redirect('/cart.php');
-    }
-    $total = $cart->getTotal();
+if (empty($cartItems)) {
+    redirect('/cart.php');
 }
+$total = $cart->getTotal();
 $error = '';
-$success = $success ?? false;
-$orderId = $orderId ?? null;
-$orderNumber = $orderNumber ?? null;
-$paymentMethod = $paymentMethod ?? null;
+$success = false;
+$orderId = null;
+$orderNumber = null;
+$paymentMethod = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$session->validateCsrfToken($_POST['csrf_token'] ?? '')) {
@@ -89,13 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     );
 
                     $cart->clear();
-                    $session->set('checkout_success', [
-                        'order_id' => $orderId,
-                        'order_number' => $orderNumber,
-                        'payment_method' => $paymentMethod,
-                        'total' => $total
-                    ]);
-                    redirect('/checkout.php?success=1');
+                    $success = true;
                 } else {
                     $error = 'Failed to create order. Please try again.';
                 }
