@@ -21,7 +21,7 @@ jobs:
 
       - name: Sync files to server
         run: |
-          rsync -az --delete --exclude '.git/' ./ root@cor-forum.de:/root/corfoum/regnumshop
+            rsync -az --delete --exclude '.git/' --exclude '.env' ./ root@cor-forum.de:/root/corfoum/regnumshop
 
       - name: Restart Docker services
         run: |
