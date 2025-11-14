@@ -77,7 +77,7 @@ renderHeader('Shop', $session);
         </div>
         <div class="col-md-3 text-md-end mt-2 mt-md-0">
             <?php if (!$session->isLoggedIn()): ?>
-                <a href="/login.php" class="btn btn-light btn-sm">Login to Purchase</a>
+                <a href="/login.php" class="btn btn-outline-primary btn-sm">Login to Purchase</a>
             <?php endif; ?>
         </div>
     </div>
@@ -116,7 +116,7 @@ renderHeader('Shop', $session);
                                     </button>
                                 </form>
                             <?php else: ?>
-                                <a href="/login.php" class="btn btn-outline-light w-100">Login to Purchase</a>
+                                <a href="/login.php" class="btn btn-outline-primary w-100">Login to Purchase</a>
                             <?php endif; ?>
                         </div>
                     </div>
