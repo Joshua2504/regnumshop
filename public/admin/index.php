@@ -226,6 +226,50 @@ $orders = $orderModel->getAll();
                                                 </tfoot>
                                             </table>
 
+                                            <!-- Payment Details Section -->
+                                            <div class="mb-4">
+                                                <h6>Payment Details:</h6>
+                                                <div class="card bg-light">
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <strong>Payment Method:</strong> <?php echo getPaymentMethodLabel($order['payment_method']); ?><br>
+                                                                <strong>Total Amount:</strong> <?php echo formatPrice($order['total_amount']); ?><br>
+                                                                <strong>Order Reference:</strong> #<?php echo e($orderNumber); ?><br>
+                                                                <strong>Payment Status:</strong> 
+                                                                <span class="badge bg-<?php echo getPaymentStatusBadge($order['payment_status']); ?>">
+                                                                    <?php echo getPaymentStatusLabel($order['payment_status']); ?>
+                                                                </span>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <?php if ($order['payment_method'] === 'paypal'): ?>
+                                                                    <small>
+                                                                        <strong>PayPal Instructions:</strong><br>
+                                                                        Customer should send payment to: <?php echo e(PAYPAL_EMAIL); ?><br>
+                                                                        Reference: Order #<?php echo e($orderNumber); ?>
+                                                                    </small>
+                                                                <?php elseif ($order['payment_method'] === 'bank_transfer'): ?>
+                                                                    <small>
+                                                                        <strong>Bank Transfer Instructions:</strong><br>
+                                                                        Bank: <?php echo e(BANK_NAME); ?><br>
+                                                                        IBAN: <?php echo e(BANK_IBAN); ?><br>
+                                                                        Reference: Order #<?php echo e($orderNumber); ?>
+                                                                    </small>
+                                                                <?php endif; ?>
+                                                                
+                                                                <?php if ($order['updated_at'] !== $order['created_at']): ?>
+                                                                    <div class="mt-2">
+                                                                        <small class="text-muted">
+                                                                            <strong>Last Updated:</strong> <?php echo formatDate($order['updated_at']); ?>
+                                                                        </small>
+                                                                    </div>
+                                                                <?php endif; ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <form method="POST" class="mb-3">
