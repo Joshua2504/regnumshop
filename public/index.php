@@ -65,7 +65,7 @@ renderHeader('Shop', $session);
 <section id="shop-items">
 
 <!-- Delivery Time Banner -->
-<div class="alert alert-success mb-4">
+<div class="alert alert-success alert-permanent mb-4">
     <div class="row align-items-center">
         <div class="col-md-9">
             <h5 class="mb-0">
