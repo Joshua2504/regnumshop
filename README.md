@@ -39,12 +39,14 @@ A simple PHP-based online shop for Regnum Online in-game items. Users can login 
    # Bank Transfer Details
    BANK_NAME=Your Bank Name
    BANK_ACCOUNT_HOLDER=Your Name
-   BANK_IBAN=DE89370400440532013000
-   BANK_BIC=COBADEFFXXX
+   BANK_IBAN=iban-here
+   BANK_BIC=bic-here
 
-   # Admin Panel (change this password!)
-   ADMIN_USERNAME=admin
-   ADMIN_PASSWORD=admin123
+   # Admin Access (comma-separated COR forum user IDs)
+   ADMIN_FORUM_IDS=2,146
+
+   # Email (disable in local dev to prevent hanging checkout)
+   SMTP_ENABLED=false
    ```
 
 3. **Start the Docker containers**
@@ -62,10 +64,8 @@ A simple PHP-based online shop for Regnum Online in-game items. Users can login 
 ## Default Credentials
 
 ### Admin Panel
-- **Username**: admin
-- **Password**: admin123
-
-**IMPORTANT**: Change the admin password in the `.env` file after first login!
+- Log in with your cor-forum.de account on the main site, then visit `/admin`.
+- Only forum accounts whose IDs appear in `ADMIN_FORUM_IDS` (defaults: 2 and 146) are granted access.
 
 ### User Login
 Users login with their cor-forum.de credentials via the API.

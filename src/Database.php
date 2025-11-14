@@ -49,6 +49,19 @@ class Database {
             $initSql = file_get_contents(__DIR__ . '/../database/init.sql');
             $this->pdo->exec($initSql);
         }
+        $this->applyMigrations();
+    }
+
+    /**
+     * Apply simple schema migrations when necessary.
+     */
+    private function applyMigrations() {
+        $columns = $this->pdo->query('PRAGMA table_info(users)')->fetchAll();
+        $columnNames = array_column($columns, 'name');
+
+        if (!in_array('forum_user_id', $columnNames, true)) {
+            $this->pdo->exec('ALTER TABLE users ADD COLUMN forum_user_id INTEGER');
+        }
     }
 
     public function query($sql, $params = []) {

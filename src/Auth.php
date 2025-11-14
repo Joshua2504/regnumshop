@@ -45,9 +45,11 @@ class Auth {
             }
 
             // Login successful, create or get user
-            // Try to extract email from API response if available
-            $email = $result['email'] ?? $result['user']['email'] ?? null;
-            $user = $this->createOrGetUser($username, $email);
+            $apiUser = $result['user'] ?? [];
+            $email = $result['email'] ?? ($apiUser['email'] ?? null);
+            $forumUserId = $this->extractForumUserId($result);
+            $resolvedUsername = $apiUser['username'] ?? ($result['username'] ?? $username);
+            $user = $this->createOrGetUser($resolvedUsername, $email, $forumUserId);
 
             if (!$user) {
                 return ['success' => false, 'error' => 'Failed to create user session.'];
@@ -71,19 +73,35 @@ class Auth {
     /**
      * Create or get existing user
      */
-    private function createOrGetUser($username, $email = null) {
-        $stmt = $this->db->query(
-            'SELECT * FROM users WHERE username = ?',
-            [$username]
-        );
+    private function createOrGetUser($username, $email = null, $forumUserId = null) {
+        $user = null;
 
-        $user = $stmt->fetch();
+        if ($forumUserId) {
+            $stmt = $this->db->query(
+                'SELECT * FROM users WHERE forum_user_id = ? LIMIT 1',
+                [$forumUserId]
+            );
+            if ($stmt) {
+                $user = $stmt->fetch();
+            }
+        }
+
+        if (!$user) {
+            $stmt = $this->db->query(
+                'SELECT * FROM users WHERE username = ? LIMIT 1',
+                [$username]
+            );
+
+            if ($stmt) {
+                $user = $stmt->fetch();
+            }
+        }
 
         if (!$user) {
             // Create new user
             $this->db->query(
-                'INSERT INTO users (username, email) VALUES (?, ?)',
-                [$username, $email]
+                'INSERT INTO users (username, email, forum_user_id) VALUES (?, ?, ?)',
+                [$username, $email, $forumUserId]
             );
 
             $userId = $this->db->lastInsertId();
@@ -91,7 +109,8 @@ class Auth {
             return [
                 'id' => $userId,
                 'username' => $username,
-                'email' => $email
+                'email' => $email,
+                'forum_user_id' => $forumUserId
             ];
         } else {
             // Update email if provided and different
@@ -101,6 +120,22 @@ class Auth {
                     [$email, $user['id']]
                 );
                 $user['email'] = $email;
+            }
+
+            if ($forumUserId && (int)$user['forum_user_id'] !== (int)$forumUserId) {
+                $this->db->query(
+                    'UPDATE users SET forum_user_id = ? WHERE id = ?',
+                    [$forumUserId, $user['id']]
+                );
+                $user['forum_user_id'] = $forumUserId;
+            }
+
+            if ($username && $user['username'] !== $username) {
+                $this->db->query(
+                    'UPDATE users SET username = ? WHERE id = ?',
+                    [$username, $user['id']]
+                );
+                $user['username'] = $username;
             }
         }
 
@@ -157,15 +192,31 @@ class Auth {
     }
 
     /**
-     * Admin login (simple username/password check)
+     * Extract COR forum user ID from API response.
      */
-    public function adminLogin($username, $password) {
-        // For simplicity, check against config values
-        // In production, you should use database with hashed passwords
-        if ($username === ADMIN_USERNAME && $password === ADMIN_PASSWORD) {
-            return true;
+    private function extractForumUserId(array $result) {
+        $candidates = [];
+
+        if (isset($result['user']) && is_array($result['user'])) {
+            $candidates[] = $result['user']['user_id'] ?? null;
+            $candidates[] = $result['user']['id'] ?? null;
+            $candidates[] = $result['user']['uid'] ?? null;
         }
 
-        return false;
+        $candidates[] = $result['user_id'] ?? null;
+        $candidates[] = $result['id'] ?? null;
+
+        foreach ($candidates as $candidate) {
+            if ($candidate === null || $candidate === '' || $candidate === false) {
+                continue;
+            }
+
+            $intVal = (int)$candidate;
+            if ($intVal > 0) {
+                return $intVal;
+            }
+        }
+
+        return null;
     }
 }

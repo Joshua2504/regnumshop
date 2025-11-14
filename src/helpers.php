@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/Cart.php';
+
 /**
  * Escape HTML output
  */

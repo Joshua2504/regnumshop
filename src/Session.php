@@ -70,10 +70,21 @@ class Session {
     }
 
     /**
-     * Check if admin is logged in
+     * Check if current user is allowed to access admin area.
      */
     public function isAdmin() {
-        return $this->get('is_admin', false) === true;
+        if ($this->get('is_admin', false) === true) {
+            // Legacy flag for compatibility
+            return true;
+        }
+
+        $user = $this->getUser();
+        if (!$user || empty(ADMIN_FORUM_IDS)) {
+            return false;
+        }
+
+        $forumId = isset($user['forum_user_id']) ? (int)$user['forum_user_id'] : 0;
+        return $forumId > 0 && in_array($forumId, ADMIN_FORUM_IDS, true);
     }
 
     /**

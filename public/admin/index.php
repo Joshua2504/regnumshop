@@ -10,52 +10,37 @@ require_once __DIR__ . '/../../src/helpers.php';
 $session = new Session();
 $email = new Email();
 
-// Check admin login
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['admin_login'])) {
-    $username = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
-
-    $auth = new Auth();
-    if ($auth->adminLogin($username, $password)) {
-        $session->set('is_admin', true);
-        redirect('/admin/index.php');
-    } else {
-        $loginError = 'Invalid admin credentials.';
-    }
+if (!$session->isLoggedIn()) {
+    redirect('/login.php');
 }
 
 if (!$session->isAdmin()) {
-    // Show login form
+    http_response_code(403);
     ?>
     <!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Admin Login - <?php echo e(APP_NAME); ?></title>
+        <title>Admin Access Required - <?php echo e(APP_NAME); ?></title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     </head>
     <body>
         <div class="container">
             <div class="row justify-content-center mt-5">
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="card-title text-center mb-4">Admin Login</h3>
-                            <?php if (isset($loginError)): ?>
-                                <div class="alert alert-danger"><?php echo e($loginError); ?></div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm">
+                        <div class="card-body text-center">
+                            <h3 class="card-title mb-3">Admin Access Required</h3>
+                            <p class="text-muted">
+                                This area is limited to COR forum accounts with IDs listed in <code>ADMIN_FORUM_IDS</code>.
+                            </p>
+                            <?php if (!empty(ADMIN_FORUM_IDS)): ?>
+                                <p class="small text-muted mb-3">
+                                    Allowed IDs: <?php echo e(implode(', ', ADMIN_FORUM_IDS)); ?>
+                                </p>
                             <?php endif; ?>
-                            <form method="POST">
-                                <div class="mb-3">
-                                    <label for="username" class="form-label">Username</label>
-                                    <input type="text" class="form-control" id="username" name="username" required autofocus>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="password" class="form-label">Password</label>
-                                    <input type="password" class="form-control" id="password" name="password" required>
-                                </div>
-                                <button type="submit" name="admin_login" class="btn btn-primary w-100">Login</button>
-                            </form>
+                            <a href="/" class="btn btn-primary">Back to Shop</a>
                         </div>
                     </div>
                 </div>

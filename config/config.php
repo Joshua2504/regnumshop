@@ -69,10 +69,12 @@ define('BANK_IBAN', env('BANK_IBAN', ''));
 define('BANK_BIC', env('BANK_BIC', ''));
 
 // Admin configuration
-define('ADMIN_USERNAME', env('ADMIN_USERNAME', 'admin'));
-define('ADMIN_PASSWORD', env('ADMIN_PASSWORD', 'admin123'));
+$adminForumIds = array_filter(array_map('trim', explode(',', env('ADMIN_FORUM_IDS', ''))));
+define('ADMIN_FORUM_IDS', array_map('intval', $adminForumIds));
 
 // SMTP Email configuration
+$smtpEnabled = env('SMTP_ENABLED', 'true');
+define('SMTP_ENABLED', filter_var($smtpEnabled, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false);
 define('SMTP_HOST', env('SMTP_HOST', 'mail.treudler.net'));
 define('SMTP_PORT', (int)env('SMTP_PORT', 587));
 define('SMTP_USERNAME', env('SMTP_USERNAME', 'system@treudler.net'));

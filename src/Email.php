@@ -21,6 +21,11 @@ class Email {
      * Send email using SMTP
      */
     public function send($to, $subject, $body, $isHtml = true) {
+        if (!SMTP_ENABLED) {
+            error_log('SMTP disabled, skipping email send');
+            return true;
+        }
+
         try {
             // Create SMTP connection
             $socket = $this->smtpConnect();
