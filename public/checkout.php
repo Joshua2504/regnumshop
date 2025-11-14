@@ -121,13 +121,13 @@ renderHeader('Checkout', $session);
             if ($order['payment_method'] === 'paypal'):
             ?>
                 <p>Please send <strong><?php echo formatPrice($total); ?></strong> to our PayPal account:</p>
-                <div class="alert alert-info">
+                <div class="alert alert-info alert-permanent">
                     <strong>PayPal Email:</strong> <?php echo e(PAYPAL_EMAIL); ?>
                 </div>
                 <p class="text-muted">Please include your order number <strong>#<?php echo e($displayOrderNumber); ?></strong> in the payment note.</p>
             <?php else: ?>
                 <p>Please transfer <strong><?php echo formatPrice($total); ?></strong> to our bank account:</p>
-                <div class="alert alert-info">
+                <div class="alert alert-info alert-permanent">
                     <strong>Bank:</strong> <?php echo e(BANK_NAME); ?><br>
                     <strong>Account Holder:</strong> <?php echo e(BANK_ACCOUNT_HOLDER); ?><br>
                     <strong>IBAN:</strong> <?php echo e(BANK_IBAN); ?><br>
