@@ -20,6 +20,10 @@ class Auth {
             $ch = curl_init(COR_API_URL);
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
             curl_setopt($ch, CURLOPT_HTTPHEADER, [
                 'Content-Type: application/x-www-form-urlencoded',
                 'X-API-Key: ' . COR_API_KEY,
@@ -32,15 +36,32 @@ class Auth {
 
             $response = curl_exec($ch);
             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $curlError = curl_error($ch);
             curl_close($ch);
 
+            // Log API call details for debugging
+            error_log("COR API Call - URL: " . COR_API_URL);
+            error_log("COR API Call - HTTP Code: " . $httpCode);
+            error_log("COR API Call - Response: " . $response);
+            if ($curlError) {
+                error_log("COR API Call - cURL Error: " . $curlError);
+                return ['success' => false, 'error' => 'Connection error to authentication server.'];
+            }
+
             if ($httpCode !== 200) {
-                return ['success' => false, 'error' => 'Invalid credentials.'];
+                error_log("COR API Call - HTTP Error: " . $httpCode);
+                return ['success' => false, 'error' => 'Invalid credentials or server error.'];
             }
 
             $result = json_decode($response, true);
+            
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                error_log("COR API Call - JSON Error: " . json_last_error_msg());
+                return ['success' => false, 'error' => 'Invalid response from authentication server.'];
+            }
 
             if (!$result || !isset($result['success']) || $result['success'] !== true) {
+                error_log("COR API Call - Auth Failed: " . print_r($result, true));
                 return ['success' => false, 'error' => 'Invalid credentials.'];
             }
 
@@ -170,6 +191,7 @@ class Auth {
      */
     public function validateSession($sessionToken) {
         if (empty($sessionToken)) {
+            error_log("validateSession: Empty session token");
             return false;
         }
 
@@ -180,7 +202,20 @@ class Auth {
             [$sessionToken]
         );
 
-        return $stmt->fetch();
+        if (!$stmt) {
+            error_log("validateSession: Database query failed");
+            return false;
+        }
+
+        $user = $stmt->fetch();
+        
+        if ($user) {
+            error_log("validateSession: Found valid session for user: " . $user['username']);
+        } else {
+            error_log("validateSession: No valid session found for token");
+        }
+
+        return $user;
     }
 
     /**

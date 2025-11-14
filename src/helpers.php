@@ -13,6 +13,15 @@ function e($value) {
  * Redirect to URL
  */
 function redirect($url) {
+    // Check if headers already sent
+    if (headers_sent($filename, $linenum)) {
+        error_log("Cannot redirect - headers already sent in $filename on line $linenum");
+        echo "<script>window.location.href = '$url';</script>";
+        echo "<noscript><meta http-equiv='refresh' content='0;url=$url'></noscript>";
+        exit;
+    }
+    
+    error_log("Redirecting to: $url");
     header('Location: ' . $url);
     exit;
 }

@@ -13,7 +13,9 @@ $analytics = new Analytics();
 $analytics->trackPageView();
 
 // Redirect if already logged in
+error_log("Checking if user is already logged in...");
 if ($session->isLoggedIn()) {
+    error_log("User already logged in, redirecting to home");
     redirect('/');
 }
 
@@ -23,18 +25,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
 
+    error_log("Login attempt for username: " . $username);
+
     $auth = new Auth();
     $result = $auth->login($username, $password);
 
+    error_log("Login result: " . print_r($result, true));
+
     if ($result['success']) {
-        $session->set('session_token', $result['session_token']);
+        $sessionToken = $result['session_token'];
+        $session->set('session_token', $sessionToken);
+        
+        error_log("Session token set: " . substr($sessionToken, 0, 10) . "...");
+        
+        // Verify the token was actually set
+        $storedToken = $session->get('session_token');
+        error_log("Stored token verification: " . ($storedToken === $sessionToken ? 'MATCH' : 'MISMATCH'));
+        
+        // Test if user is now logged in
+        $isNowLoggedIn = $session->isLoggedIn();
+        error_log("User logged in check after token set: " . ($isNowLoggedIn ? 'YES' : 'NO'));
 
         // Track login
         $analytics->trackLogin($username);
 
+        error_log("Redirecting to home page");
         redirect('/');
     } else {
         $error = $result['error'] ?? 'Login failed.';
+        error_log("Login failed: " . $error);
     }
 }
 

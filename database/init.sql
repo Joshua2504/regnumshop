@@ -98,5 +98,5 @@ CREATE INDEX IF NOT EXISTS idx_analytics_user_id ON analytics_events(user_id);
 CREATE INDEX IF NOT EXISTS idx_analytics_summary_date ON analytics_summary(date);
 
 INSERT OR IGNORE INTO items (name, description, price, image_url, stock, active) VALUES
-('500 Magnanit', 'Entry pack with 500 Magnanit for a quick boost', 1.00, 'https://via.placeholder.com/300x200?text=500+Magnanit', 999, 1),
-('5000 Magnanit', 'Best value pack with 5000 Magnanit to power up your character', 4.15, 'https://via.placeholder.com/300x200?text=5000+Magnanit', 999, 1);
+('500 Magnanit', 'Entry pack with 500 Magnanit for a quick boost', 1.00, 'https://cor-forum.de/regnum/datengrab/res/TEXTURE/61594-Icon%20magnanite%20raw.png', 999, 1),
+('5000 Magnanit', 'Best value pack with 5000 Magnanit to power up your character', 4.15, 'https://cor-forum.de/regnum/datengrab/res/TEXTURE/61594-Icon%20magnanite%20raw.png', 999, 1);

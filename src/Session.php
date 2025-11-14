@@ -7,9 +7,22 @@ class Session {
 
     public function __construct() {
         if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+            if (!session_start()) {
+                error_log("Session start failed!");
+                throw new Exception("Failed to start session");
+            }
+            error_log("Session started successfully. ID: " . session_id());
+        } else {
+            error_log("Session already active. ID: " . session_id());
         }
-        $this->auth = new Auth();
+        
+        try {
+            $this->auth = new Auth();
+            error_log("Auth object created successfully");
+        } catch (Exception $e) {
+            error_log("Failed to create Auth object: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     /**
@@ -53,11 +66,19 @@ class Session {
      */
     public function isLoggedIn() {
         if (!$this->has('session_token')) {
+            error_log("Session check: No session token found");
             return false;
         }
 
-        $user = $this->auth->validateSession($this->get('session_token'));
-        return $user !== false;
+        $sessionToken = $this->get('session_token');
+        error_log("Session check: Validating token: " . substr($sessionToken, 0, 10) . "...");
+        
+        $user = $this->auth->validateSession($sessionToken);
+        $isValid = $user !== false;
+        
+        error_log("Session check: Token valid: " . ($isValid ? 'YES' : 'NO'));
+        
+        return $isValid;
     }
 
     /**

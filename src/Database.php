@@ -10,8 +10,19 @@ class Database {
             $dbPath = DB_PATH;
             $dbDir = dirname($dbPath);
 
+            error_log("Database path: " . $dbPath);
+            error_log("Database directory: " . $dbDir);
+
             if (!is_dir($dbDir)) {
-                mkdir($dbDir, 0755, true);
+                if (!mkdir($dbDir, 0755, true)) {
+                    throw new Exception("Failed to create database directory: " . $dbDir);
+                }
+                error_log("Created database directory: " . $dbDir);
+            }
+
+            // Check if directory is writable
+            if (!is_writable($dbDir)) {
+                throw new Exception("Database directory is not writable: " . $dbDir);
             }
 
             // Create database connection
@@ -22,10 +33,16 @@ class Database {
             // Enable foreign keys
             $this->pdo->exec('PRAGMA foreign_keys = ON');
 
+            error_log("Database connected successfully");
+
             // Initialize database if needed
             $this->initializeDatabase();
         } catch (PDOException $e) {
+            error_log('Database PDO error: ' . $e->getMessage());
             die('Database connection failed: ' . $e->getMessage());
+        } catch (Exception $e) {
+            error_log('Database error: ' . $e->getMessage());
+            die('Database error: ' . $e->getMessage());
         }
     }
 
