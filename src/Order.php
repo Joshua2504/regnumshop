@@ -20,11 +20,13 @@ class Order {
                 $total += $item['price'] * $item['quantity'];
             }
 
+            $orderNumber = $this->generateOrderNumber();
+
             // Create order
             $stmt = $this->db->query(
-                'INSERT INTO orders (user_id, total_amount, payment_method, payment_status, order_status)
-                 VALUES (?, ?, ?, ?, ?)',
-                [$userId, $total, $paymentMethod, 'pending', 'pending']
+                'INSERT INTO orders (order_number, user_id, total_amount, payment_method, payment_status, order_status)
+                 VALUES (?, ?, ?, ?, ?, ?)',
+                [$orderNumber, $userId, $total, $paymentMethod, 'pending', 'pending']
             );
 
             $orderId = $this->db->lastInsertId();
@@ -43,7 +45,10 @@ class Order {
             }
 
             $this->db->commit();
-            return $orderId;
+            return [
+                'id' => (int)$orderId,
+                'order_number' => $orderNumber
+            ];
 
         } catch (Exception $e) {
             $this->db->rollback();
@@ -132,5 +137,21 @@ class Order {
             [$notes, $id]
         );
         return $stmt !== false;
+    }
+
+    /**
+     * Generate a unique 6-digit order number.
+     */
+    private function generateOrderNumber() {
+        do {
+            $number = (string)random_int(100000, 999999);
+            $stmt = $this->db->query(
+                'SELECT COUNT(*) as cnt FROM orders WHERE order_number = ?',
+                [$number]
+            );
+            $count = $stmt ? (int)$stmt->fetchColumn() : 0;
+        } while ($count > 0);
+
+        return $number;
     }
 }

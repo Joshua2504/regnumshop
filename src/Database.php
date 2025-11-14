@@ -62,6 +62,44 @@ class Database {
         if (!in_array('forum_user_id', $columnNames, true)) {
             $this->pdo->exec('ALTER TABLE users ADD COLUMN forum_user_id INTEGER');
         }
+
+        // Remove legacy admin_users table (handled via forum IDs now)
+        $adminUsersTable = $this->pdo->query("SELECT name FROM sqlite_master WHERE type='table' AND name='admin_users'")->fetch();
+        if ($adminUsersTable) {
+            $this->pdo->exec('DROP TABLE IF EXISTS admin_users');
+        }
+
+        $orderColumns = $this->pdo->query('PRAGMA table_info(orders)')->fetchAll();
+        $orderColumnNames = array_column($orderColumns, 'name');
+
+        if (!in_array('order_number', $orderColumnNames, true)) {
+            $this->pdo->exec('ALTER TABLE orders ADD COLUMN order_number TEXT');
+            $orders = $this->pdo->query('SELECT id FROM orders')->fetchAll(PDO::FETCH_COLUMN);
+            foreach ($orders as $orderId) {
+                $this->assignOrderNumber($orderId);
+            }
+        }
+
+        $this->pdo->exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_orders_order_number ON orders(order_number)');
+    }
+
+    /**
+     * Assign a unique 6-digit order number to an order.
+     */
+    private function assignOrderNumber($orderId) {
+        $number = $this->generateUniqueOrderNumber();
+        $stmt = $this->pdo->prepare('UPDATE orders SET order_number = ? WHERE id = ?');
+        $stmt->execute([$number, $orderId]);
+    }
+
+    private function generateUniqueOrderNumber() {
+        do {
+            $number = (string)random_int(100000, 999999);
+            $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM orders WHERE order_number = ?');
+            $stmt->execute([$number]);
+        } while ($stmt->fetchColumn() > 0);
+
+        return $number;
     }
 
     public function query($sql, $params = []) {

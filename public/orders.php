@@ -41,8 +41,9 @@ renderHeader('My Orders', $session);
             </thead>
             <tbody>
                 <?php foreach ($orders as $order): ?>
+                    <?php $orderNumber = $order['order_number'] ?? str_pad((string)$order['id'], 6, '0', STR_PAD_LEFT); ?>
                     <tr>
-                        <td>#<?php echo $order['id']; ?></td>
+                        <td>#<?php echo e($orderNumber); ?></td>
                         <td><?php echo formatDate($order['created_at']); ?></td>
                         <td><?php echo formatPrice($order['total_amount']); ?></td>
                         <td><?php echo getPaymentMethodLabel($order['payment_method']); ?></td>
@@ -68,7 +69,7 @@ renderHeader('My Orders', $session);
                         <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title">Order #<?php echo $order['id']; ?> Details</h5>
+                                    <h5 class="modal-title">Order #<?php echo e($orderNumber); ?> Details</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">

@@ -28,8 +28,8 @@ docker-compose up -d
 
 ### 3. Access Your Shop
 
-- **Shop Frontend**: http://localhost:8080
-- **Admin Panel**: http://localhost:8080/admin
+- **Shop Frontend**: http://localhost:1357
+- **Admin Panel**: http://localhost:1357/admin
   - Default username: `admin`
   - Default password: `admin123` (change this in `.env`!)
 
@@ -37,7 +37,7 @@ docker-compose up -d
 
 ### Add Your Items
 
-1. Go to http://localhost:8080/admin
+1. Go to http://localhost:1357/admin
 2. Login with admin credentials
 3. Click "Items" in the navigation
 4. Click "Add New Item"
@@ -52,7 +52,7 @@ docker-compose up -d
 
 ### Test the Shop
 
-1. Go to http://localhost:8080
+1. Go to http://localhost:1357
 2. Click "Login"
 3. Use your cor-forum.de credentials
 4. Add items to cart
@@ -62,7 +62,7 @@ docker-compose up -d
 
 ### Manage Orders
 
-1. Go to http://localhost:8080/admin
+1. Go to http://localhost:1357/admin
 2. Click "Orders"
 3. Click "Manage" on any order
 4. Update payment status when payment received

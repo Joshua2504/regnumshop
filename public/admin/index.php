@@ -33,11 +33,11 @@ if (!$session->isAdmin()) {
                         <div class="card-body text-center">
                             <h3 class="card-title mb-3">Admin Access Required</h3>
                             <p class="text-muted">
-                                This area is limited to COR forum accounts with IDs listed in <code>ADMIN_FORUM_IDS</code>.
+                                This area is limited to COR forum usernames listed in <code>ADMIN_USERNAMES</code>.
                             </p>
-                            <?php if (!empty(ADMIN_FORUM_IDS)): ?>
+                            <?php if (!empty(ADMIN_USERNAMES)): ?>
                                 <p class="small text-muted mb-3">
-                                    Allowed IDs: <?php echo e(implode(', ', ADMIN_FORUM_IDS)); ?>
+                                    Allowed usernames: <?php echo e(implode(', ', ADMIN_USERNAMES)); ?>
                                 </p>
                             <?php endif; ?>
                             <a href="/" class="btn btn-primary">Back to Shop</a>
@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $email->sendOrderStatusUpdate(
                         $user['email'],
                         $order['username'],
-                        $orderId,
+                        $order['order_number'] ?? str_pad((string)$order['id'], 6, '0', STR_PAD_LEFT),
                         $orderStatus
                     );
                 }
@@ -153,8 +153,9 @@ $orders = $orderModel->getAll();
                     </thead>
                     <tbody>
                         <?php foreach ($orders as $order): ?>
+                            <?php $orderNumber = $order['order_number'] ?? str_pad((string)$order['id'], 6, '0', STR_PAD_LEFT); ?>
                             <tr>
-                                <td>#<?php echo $order['id']; ?></td>
+                                <td>#<?php echo e($orderNumber); ?></td>
                                 <td><?php echo e($order['username']); ?></td>
                                 <td><?php echo formatDate($order['created_at']); ?></td>
                                 <td><?php echo formatPrice($order['total_amount']); ?></td>
@@ -181,7 +182,7 @@ $orders = $orderModel->getAll();
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title">Manage Order #<?php echo $order['id']; ?></h5>
+                                            <h5 class="modal-title">Manage Order #<?php echo e($orderNumber); ?></h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                         </div>
                                         <div class="modal-body">

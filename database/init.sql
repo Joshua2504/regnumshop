@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS items (
 -- Orders table (stores order information)
 CREATE TABLE IF NOT EXISTS orders (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    order_number TEXT NOT NULL UNIQUE,
     user_id INTEGER NOT NULL,
     total_amount DECIMAL(10, 2) NOT NULL,
     payment_method TEXT NOT NULL CHECK(payment_method IN ('paypal', 'bank_transfer')),
@@ -54,14 +55,6 @@ CREATE TABLE IF NOT EXISTS order_items (
     price DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE
-);
-
--- Admin users table (for admin panel access)
-CREATE TABLE IF NOT EXISTS admin_users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Analytics table (page views, events tracking)
@@ -96,17 +89,13 @@ CREATE TABLE IF NOT EXISTS analytics_summary (
 CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(session_token);
 CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_orders_order_number ON orders(order_number);
 CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
 CREATE INDEX IF NOT EXISTS idx_items_active ON items(active);
 CREATE INDEX IF NOT EXISTS idx_analytics_event_type ON analytics_events(event_type);
 CREATE INDEX IF NOT EXISTS idx_analytics_created_at ON analytics_events(created_at);
 CREATE INDEX IF NOT EXISTS idx_analytics_user_id ON analytics_events(user_id);
 CREATE INDEX IF NOT EXISTS idx_analytics_summary_date ON analytics_summary(date);
-
--- Insert a default admin user (username: admin, password: admin123)
--- Password hash is bcrypt hash of 'admin123'
-INSERT OR IGNORE INTO admin_users (username, password_hash)
-VALUES ('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
 
 INSERT OR IGNORE INTO items (name, description, price, image_url, stock, active) VALUES
 ('500 Magnanit', 'Entry pack with 500 Magnanit for a quick boost', 1.00, 'https://via.placeholder.com/300x200?text=500+Magnanit', 999, 1),

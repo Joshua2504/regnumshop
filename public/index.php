@@ -45,12 +45,24 @@ $items = $itemModel->getActiveItems();
 renderHeader('Shop', $session);
 ?>
 
+<div class="text-center mb-4">
+    <h1 class="mb-3">Champions of Regnum Shop</h1>
+    <p class="text-muted">
+        Pick a pack, pay, and get your Magnanit delivered. No fluff—just quick trading like back in the day.
+    </p>
+    <?php if (!$session->isLoggedIn()): ?>
+        <a href="/login.php" class="btn btn-primary btn-sm">Login with COR account</a>
+    <?php endif; ?>
+</div>
+
 <?php if (isset($message)): ?>
     <div class="alert alert-<?php echo $messageType; ?> alert-dismissible fade show" role="alert">
         <?php echo e($message); ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 <?php endif; ?>
+
+<section id="shop-items">
 
 <!-- Delivery Time Banner -->
 <div class="alert alert-success mb-4">
@@ -71,8 +83,6 @@ renderHeader('Shop', $session);
     </div>
 </div>
 
-<h1 class="mb-4">Available Items</h1>
-
 <?php if (empty($items)): ?>
     <div class="alert alert-info">
         No items available at the moment. Please check back later.
@@ -83,7 +93,7 @@ renderHeader('Shop', $session);
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
                     <?php if ($item['image_url']): ?>
-                        <img src="<?php echo e($item['image_url']); ?>" class="card-img-top" alt="<?php echo e($item['name']); ?>" style="height: 200px; object-fit: cover;">
+                        <img src="<?php echo e($item['image_url']); ?>" class="card-img-top" alt="<?php echo e($item['name']); ?>">
                     <?php else: ?>
                         <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
                             <span class="text-white">No Image</span>
@@ -91,11 +101,11 @@ renderHeader('Shop', $session);
                     <?php endif; ?>
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title"><?php echo e($item['name']); ?></h5>
-                        <p class="card-text"><?php echo e($item['description']); ?></p>
+                        <p class="card-text text-muted small"><?php echo e($item['description']); ?></p>
                         <div class="mt-auto">
-                            <p class="card-text">
-                                <strong>Price:</strong> <?php echo formatPrice($item['price']); ?><br>
-                                <strong>In Stock:</strong> <?php echo e($item['stock']); ?>
+                            <p class="card-text mb-3">
+                                <span class="text-uppercase small text-muted">Price</span><br>
+                                <span class="fs-4 fw-bold text-warning"><?php echo formatPrice($item['price']); ?></span>
                             </p>
                             <?php if ($session->isLoggedIn()): ?>
                                 <form method="POST" class="d-flex gap-2">
@@ -106,7 +116,7 @@ renderHeader('Shop', $session);
                                     </button>
                                 </form>
                             <?php else: ?>
-                                <a href="/login.php" class="btn btn-outline-primary w-100">Login to Purchase</a>
+                                <a href="/login.php" class="btn btn-outline-light w-100">Login to Purchase</a>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -115,5 +125,6 @@ renderHeader('Shop', $session);
         <?php endforeach; ?>
     </div>
 <?php endif; ?>
+</section>
 
 <?php renderFooter(); ?>

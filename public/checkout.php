@@ -24,14 +24,26 @@ if (!$session->isLoggedIn()) {
 $cart = new Cart();
 $cartItems = $cart->getItems();
 
-if (empty($cartItems)) {
-    redirect('/cart.php');
+// Preserve success info (post/redirect/get)
+$storedSuccess = $session->get('checkout_success');
+if ($storedSuccess) {
+    $success = true;
+    $orderId = $storedSuccess['order_id'];
+    $orderNumber = $storedSuccess['order_number'];
+    $paymentMethod = $storedSuccess['payment_method'];
+    $total = $storedSuccess['total'];
+    $session->remove('checkout_success');
+} else {
+    if (empty($cartItems)) {
+        redirect('/cart.php');
+    }
+    $total = $cart->getTotal();
 }
-
-$total = $cart->getTotal();
 $error = '';
-$success = false;
-$orderId = null;
+$success = $success ?? false;
+$orderId = $orderId ?? null;
+$orderNumber = $orderNumber ?? null;
+$paymentMethod = $paymentMethod ?? null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$session->validateCsrfToken($_POST['csrf_token'] ?? '')) {
@@ -49,18 +61,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $orderModel = new Order();
                 $user = $session->getUser();
 
-                $orderId = $orderModel->create($user['id'], $cartItems, $paymentMethod);
+                $orderResult = $orderModel->create($user['id'], $cartItems, $paymentMethod);
 
-                if ($orderId) {
+                if ($orderResult) {
+                    $orderId = $orderResult['id'];
+                    $orderNumber = $orderResult['order_number'];
                     // Track order
-                    $analytics->trackOrder($orderId, $total);
+                    $analytics->trackOrder($orderNumber, $total);
 
                     // Send email notifications
                     if ($user['email']) {
                         $email->sendOrderConfirmation(
                             $user['email'],
                             $user['username'],
-                            $orderId,
+                            $orderNumber,
                             $total,
                             $paymentMethod
                         );
@@ -68,14 +82,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     // Send admin notification
                     $email->sendAdminOrderNotification(
-                        $orderId,
+                        $orderNumber,
                         $user['username'],
                         $total,
                         $paymentMethod
                     );
 
                     $cart->clear();
-                    $success = true;
+                    $session->set('checkout_success', [
+                        'order_id' => $orderId,
+                        'order_number' => $orderNumber,
+                        'payment_method' => $paymentMethod,
+                        'total' => $total
+                    ]);
+                    redirect('/checkout.php?success=1');
                 } else {
                     $error = 'Failed to create order. Please try again.';
                 }
@@ -87,10 +107,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 renderHeader('Checkout', $session);
 ?>
 
-<?php if ($success && $orderId): ?>
+<?php if ($success && $orderNumber): ?>
     <div class="alert alert-success">
         <h4 class="alert-heading">Order Placed Successfully!</h4>
-        <p>Your order #<?php echo $orderId; ?> has been placed successfully.</p>
+        <p>Your order #<?php echo e($orderNumber); ?> has been placed successfully.</p>
     </div>
 
     <!-- Delivery Time Notice -->
@@ -114,13 +134,14 @@ renderHeader('Checkout', $session);
 
             <?php
             $order = (new Order())->getById($orderId);
+            $displayOrderNumber = $order['order_number'] ?? $orderNumber;
             if ($order['payment_method'] === 'paypal'):
             ?>
                 <p>Please send <strong><?php echo formatPrice($total); ?></strong> to our PayPal account:</p>
                 <div class="alert alert-info">
                     <strong>PayPal Email:</strong> <?php echo e(PAYPAL_EMAIL); ?>
                 </div>
-                <p class="text-muted">Please include your order number <strong>#<?php echo $orderId; ?></strong> in the payment note.</p>
+                <p class="text-muted">Please include your order number <strong>#<?php echo e($displayOrderNumber); ?></strong> in the payment note.</p>
             <?php else: ?>
                 <p>Please transfer <strong><?php echo formatPrice($total); ?></strong> to our bank account:</p>
                 <div class="alert alert-info">
@@ -128,7 +149,7 @@ renderHeader('Checkout', $session);
                     <strong>Account Holder:</strong> <?php echo e(BANK_ACCOUNT_HOLDER); ?><br>
                     <strong>IBAN:</strong> <?php echo e(BANK_IBAN); ?><br>
                     <strong>BIC:</strong> <?php echo e(BANK_BIC); ?><br>
-                    <strong>Reference:</strong> Order #<?php echo $orderId; ?>
+                    <strong>Reference:</strong> Order #<?php echo e($displayOrderNumber); ?>
                 </div>
             <?php endif; ?>
 

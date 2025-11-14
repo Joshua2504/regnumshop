@@ -42,8 +42,8 @@ A simple PHP-based online shop for Regnum Online in-game items. Users can login 
    BANK_IBAN=iban-here
    BANK_BIC=bic-here
 
-   # Admin Access (comma-separated COR forum user IDs)
-   ADMIN_FORUM_IDS=2,146
+   # Admin Access (comma-separated usernames)
+   ADMIN_USERNAMES=Joshua2504
 
    # Email (disable in local dev to prevent hanging checkout)
    SMTP_ENABLED=false
@@ -58,14 +58,14 @@ A simple PHP-based online shop for Regnum Online in-game items. Users can login 
 4. **Access the shop**
 
    Open your browser and navigate to:
-   - Shop: http://localhost:8080
-   - Admin Panel: http://localhost:8080/admin
+   - Shop: http://localhost:1357
+   - Admin Panel: http://localhost:1357/admin
 
 ## Default Credentials
 
 ### Admin Panel
 - Log in with your cor-forum.de account on the main site, then visit `/admin`.
-- Only forum accounts whose IDs appear in `ADMIN_FORUM_IDS` (defaults: 2 and 146) are granted access.
+- Only usernames listed in `ADMIN_USERNAMES` (default: `Joshua2504`) are granted access.
 
 ### User Login
 Users login with their cor-forum.de credentials via the API.
@@ -121,7 +121,7 @@ regnumshop/
 
 ### For Administrators
 
-1. **Login**: Go to http://localhost:8080/admin and login
+1. **Login**: Go to http://localhost:1357/admin and login
 2. **Manage Orders**:
    - View all orders
    - Update payment status (pending/paid/failed)
@@ -142,7 +142,6 @@ regnumshop/
 - **items**: Store items for sale
 - **orders**: Store order information
 - **order_items**: Store items in each order
-- **admin_users**: Admin user accounts
 
 ## Payment Workflow
 

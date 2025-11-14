@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/Auth.php';
+
 class Session {
     private $auth;
 
@@ -79,12 +81,12 @@ class Session {
         }
 
         $user = $this->getUser();
-        if (!$user || empty(ADMIN_FORUM_IDS)) {
+        if (!$user || empty(ADMIN_USERNAMES)) {
             return false;
         }
 
-        $forumId = isset($user['forum_user_id']) ? (int)$user['forum_user_id'] : 0;
-        return $forumId > 0 && in_array($forumId, ADMIN_FORUM_IDS, true);
+        $username = strtolower($user['username'] ?? '');
+        return $username !== '' && in_array($username, ADMIN_USERNAMES, true);
     }
 
     /**

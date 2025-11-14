@@ -1,0 +1,28 @@
+name: Deploy to cor-forum.de
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H cor-forum.de >> ~/.ssh/known_hosts
+
+      - name: Sync files to server
+        run: |
+          rsync -az --delete --exclude '.git/' ./ root@cor-forum.de:/root/corfoum/regnumshop
+
+      - name: Restart Docker services
+        run: |
+          ssh root@cor-forum.de 'cd /root/corfoum/regnumshop && docker compose down && docker compose up -d'

@@ -49,7 +49,7 @@ function env($key, $default = null) {
 
 // Application configuration
 define('APP_NAME', env('APP_NAME', 'Regnum Online Shop'));
-define('APP_URL', env('APP_URL', 'http://localhost:8080'));
+define('APP_URL', env('APP_URL', 'http://localhost:1357'));
 
 // Database configuration
 define('DB_PATH', env('DB_PATH', __DIR__ . '/../database/shop.db'));
@@ -69,8 +69,9 @@ define('BANK_IBAN', env('BANK_IBAN', ''));
 define('BANK_BIC', env('BANK_BIC', ''));
 
 // Admin configuration
-$adminForumIds = array_filter(array_map('trim', explode(',', env('ADMIN_FORUM_IDS', ''))));
-define('ADMIN_FORUM_IDS', array_map('intval', $adminForumIds));
+$adminUsernames = array_filter(array_map('trim', explode(',', env('ADMIN_USERNAMES', ''))));
+$adminUsernames = array_map('strtolower', $adminUsernames);
+define('ADMIN_USERNAMES', $adminUsernames);
 
 // SMTP Email configuration
 $smtpEnabled = env('SMTP_ENABLED', 'true');

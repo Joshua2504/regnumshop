@@ -195,25 +195,52 @@ class Auth {
      * Extract COR forum user ID from API response.
      */
     private function extractForumUserId(array $result) {
-        $candidates = [];
+        return $this->searchForUserId($result);
+    }
 
-        if (isset($result['user']) && is_array($result['user'])) {
-            $candidates[] = $result['user']['user_id'] ?? null;
-            $candidates[] = $result['user']['id'] ?? null;
-            $candidates[] = $result['user']['uid'] ?? null;
+    /**
+     * Recursively search for a field that looks like a forum user ID.
+     */
+    private function searchForUserId($data) {
+        if (!is_array($data)) {
+            return null;
         }
 
-        $candidates[] = $result['user_id'] ?? null;
-        $candidates[] = $result['id'] ?? null;
+        $acceptedKeys = [
+            'userid',
+            'useridentifier',
+            'forumuserid',
+            'memberid',
+            'idmember',
+            'uid'
+        ];
 
-        foreach ($candidates as $candidate) {
-            if ($candidate === null || $candidate === '' || $candidate === false) {
-                continue;
+        foreach ($data as $key => $value) {
+            $normalizedKey = preg_replace('/[^a-z0-9]/', '', strtolower((string)$key));
+            if (in_array($normalizedKey, $acceptedKeys, true) && is_numeric($value)) {
+                $intVal = (int)$value;
+                if ($intVal > 0) {
+                    return $intVal;
+                }
             }
+        }
 
-            $intVal = (int)$candidate;
-            if ($intVal > 0) {
-                return $intVal;
+        if (isset($data['id']) && is_numeric($data['id'])) {
+            $hasUserFields = isset($data['username']) || isset($data['name']) || isset($data['email']);
+            if ($hasUserFields) {
+                $intVal = (int)$data['id'];
+                if ($intVal > 0) {
+                    return $intVal;
+                }
+            }
+        }
+
+        foreach ($data as $value) {
+            if (is_array($value)) {
+                $id = $this->searchForUserId($value);
+                if ($id !== null) {
+                    return $id;
+                }
             }
         }
 
