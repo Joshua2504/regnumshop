@@ -23,6 +23,10 @@ jobs:
         run: |
           rsync -az --delete --exclude '.git/' --exclude '.env' --exclude 'shop.db' ./ root@cor-forum.de:/root/docker/corforum/regnumshop
 
+      - name: Fix permissions on server
+        run: |
+          ssh root@cor-forum.de 'cd /root/docker/corforum/regnumshop && mkdir -p database && chmod 775 database/ && find . -type f -name "*.php" -exec chmod 644 {} \;'
+
       - name: Restart Docker services
         run: |
           ssh root@cor-forum.de 'cd /root/docker/corforum/regnumshop && docker compose down && docker compose up -d'
