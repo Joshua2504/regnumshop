@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/Item.php';
+
 class Order {
     private $db;
 
@@ -79,7 +81,10 @@ class Order {
             'SELECT * FROM order_items WHERE order_id = ?',
             [$orderId]
         );
-        return $stmt->fetchAll();
+        if ($stmt === false) {
+            return [];
+        }
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**

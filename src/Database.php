@@ -8,21 +8,25 @@ class Database {
         try {
             // Create database directory if it doesn't exist
             $dbPath = DB_PATH;
-            $dbDir = dirname($dbPath);
+            $dbDir = realpath(dirname($dbPath)) ?: dirname($dbPath); // Use realpath to resolve any symlinks
 
             error_log("Database path: " . $dbPath);
             error_log("Database directory: " . $dbDir);
 
             if (!is_dir($dbDir)) {
+                error_log("Directory does not exist, attempting to create: " . $dbDir);
                 if (!mkdir($dbDir, 0755, true)) {
-                    throw new Exception("Failed to create database directory: " . $dbDir);
+                    $error = error_get_last();
+                    throw new Exception("Failed to create database directory: " . $dbDir . " - Error: " . ($error['message'] ?? 'Unknown error'));
                 }
                 error_log("Created database directory: " . $dbDir);
+            } else {
+                error_log("Database directory already exists: " . $dbDir);
             }
 
             // Check if directory is writable
             if (!is_writable($dbDir)) {
-                throw new Exception("Database directory is not writable: " . $dbDir);
+                throw new Exception("Database directory is not writable: " . $dbDir . " (Current user: " . get_current_user() . ", Owner: " . fileowner($dbDir) . ")");
             }
 
             // Create database connection

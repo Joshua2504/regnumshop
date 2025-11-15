@@ -217,6 +217,9 @@ renderHeader('My Orders', $session);
                                         <tbody>
                                             <?php
                                             $orderItems = $orderModel->getOrderItems($order['id']);
+                                            if (empty($orderItems)) {
+                                                echo '<tr><td colspan="4" class="text-center text-muted"><em>No items found for this order</em></td></tr>';
+                                            }
                                             foreach ($orderItems as $item):
                                             ?>
                                                 <tr>
