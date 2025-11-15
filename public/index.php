@@ -88,38 +88,37 @@ renderHeader('Shop', $session);
         No items available at the moment. Please check back later.
     </div>
 <?php else: ?>
-    <div class="row">
+    <div class="container">
         <?php foreach ($items as $item): ?>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
+            <div class="row mb-3 border-bottom pb-3 align-items-center">
+                <div class="col-md-3">
                     <?php if ($item['image_url']): ?>
-                        <img src="<?php echo e($item['image_url']); ?>" class="card-img-top" alt="<?php echo e($item['name']); ?>">
+                        <img src="<?php echo e($item['image_url']); ?>" class="img-fluid rounded" alt="<?php echo e($item['name']); ?>" style="max-height: 150px;">
                     <?php else: ?>
-                        <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <div class="bg-secondary d-flex align-items-center justify-content-center rounded" style="height: 150px;">
                             <span class="text-white">No Image</span>
                         </div>
                     <?php endif; ?>
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title"><?php echo e($item['name']); ?></h5>
-                        <p class="card-text text-muted small"><?php echo e($item['description']); ?></p>
-                        <div class="mt-auto">
-                            <p class="card-text mb-3">
-                                <span class="text-uppercase small text-muted">Price</span><br>
-                                <span class="fs-4 fw-bold text-warning"><?php echo formatPrice($item['price']); ?></span>
-                            </p>
-                            <?php if ($session->isLoggedIn()): ?>
-                                <form method="POST" class="d-flex gap-2">
-                                    <input type="hidden" name="item_id" value="<?php echo $item['id']; ?>">
-                                    <input type="number" name="quantity" value="1" min="1" max="<?php echo $item['stock']; ?>" class="form-control" style="width: 80px;">
-                                    <button type="submit" name="add_to_cart" class="btn btn-primary flex-grow-1" <?php echo $item['stock'] <= 0 ? 'disabled' : ''; ?>>
-                                        <?php echo $item['stock'] > 0 ? 'Add to Cart' : 'Out of Stock'; ?>
-                                    </button>
-                                </form>
-                            <?php else: ?>
-                                <a href="/login.php" class="btn btn-outline-primary w-100">Login to Purchase</a>
-                            <?php endif; ?>
-                        </div>
-                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h5><?php echo e($item['name']); ?></h5>
+                    <p class="text-muted"><?php echo e($item['description']); ?></p>
+                </div>
+                <div class="col-md-3 text-end">
+                    <p class="mb-2">
+                        <span class="fs-4 fw-bold text-warning"><?php echo $session->isLoggedIn() ? formatPrice($item['price']) : '?,??€'; ?></span>
+                    </p>
+                    <?php if ($session->isLoggedIn()): ?>
+                        <form method="POST" class="d-flex gap-2 justify-content-end">
+                            <input type="hidden" name="item_id" value="<?php echo $item['id']; ?>">
+                            <input type="number" name="quantity" value="1" min="1" max="<?php echo $item['stock']; ?>" class="form-control" style="width: 80px;">
+                            <button type="submit" name="add_to_cart" class="btn btn-primary" <?php echo $item['stock'] <= 0 ? 'disabled' : ''; ?>>
+                                <?php echo $item['stock'] > 0 ? 'Add to Cart' : 'Out of Stock'; ?>
+                            </button>
+                        </form>
+                    <?php else: ?>
+                        <a href="/login.php" class="btn btn-outline-primary">Login to Purchase</a>
+                    <?php endif; ?>
                 </div>
             </div>
         <?php endforeach; ?>
