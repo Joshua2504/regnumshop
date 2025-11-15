@@ -63,13 +63,13 @@ renderHeader('Login', $session);
 <div class="row justify-content-center">
     <div class="col-md-6">
         <!-- Registration Notice -->
-        <div class="alert alert-info border-primary mb-4" style="border-width: 2px;">
+        <div class="alert alert-info border-primary mb-4 alert-permanent" style="border-width: 2px;">
             <h5 class="alert-heading">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16" style="vertical-align: text-bottom;">
                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                     <path d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
                 </svg>
-                Login with your COR Forum Account
+                Login with your CoR-Forum Account
             </h5>
             <p class="mb-2">
                 This shop uses <strong>cor-forum.de</strong> accounts for authentication.
@@ -81,12 +81,12 @@ renderHeader('Login', $session);
 
         <!-- Registration Button -->
         <div class="d-grid gap-2 mb-4">
-            <a href="https://cor-forum.de/register" target="_blank" class="btn btn-success btn-lg">
+            <a href="https://cor-forum.de/board/register" target="_blank" class="btn btn-success btn-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-plus" viewBox="0 0 16 16" style="vertical-align: text-bottom; margin-right: 8px;">
                     <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
                     <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
                 </svg>
-                Create COR Forum Account (Free)
+                Create CoR-Forum Account (Free)
             </a>
         </div>
 
@@ -103,13 +103,13 @@ renderHeader('Login', $session);
                 <form method="POST">
                     <div class="mb-3">
                         <label for="username" class="form-label">
-                            <strong>COR Forum Username</strong>
+                            <strong>CoR-Forum Username</strong>
                         </label>
                         <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="Enter your username" required autofocus>
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">
-                            <strong>COR Forum Password</strong>
+                            <strong>CoR-Forum Password</strong>
                         </label>
                         <input type="password" class="form-control form-control-lg" id="password" name="password" placeholder="Enter your password" required>
                     </div>
@@ -129,7 +129,7 @@ renderHeader('Login', $session);
                         <strong>Secure Authentication</strong> via cor-forum.de API
                     </small>
                     <a href="https://cor-forum.de" target="_blank" class="btn btn-outline-secondary btn-sm">
-                        Visit COR Forum
+                        Visit CoR-Forum
                     </a>
                 </div>
             </div>

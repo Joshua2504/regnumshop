@@ -6,7 +6,7 @@
 - ✅ **Prominent COR Forum Registration**: Added large, eye-catching registration button at the top of login page
 - ✅ **Clear Login Instructions**: Added info box explaining authentication via cor-forum.de
 - ✅ **Enhanced Visual Design**: Improved login form with better styling and icons
-- ✅ **Direct Registration Link**: Button links to https://cor-forum.de/register
+- ✅ **Direct Registration Link**: Button links to https://cor-forum.de/board/register
 
 ### Analytics System
 - ✅ **SQLite-based Analytics**: Complete analytics tracking stored in SQLite database
