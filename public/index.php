@@ -51,7 +51,7 @@ renderHeader('Shop', $session);
         Pick a pack, pay, and get your Magnanit delivered. No fluff—just quick trading like back in the day.
     </p>
     <?php if (!$session->isLoggedIn()): ?>
-        <a href="/login.php" class="btn btn-primary btn-sm">Login with COR account</a>
+        <a href="/login.php" class="btn btn-primary btn-sm">Login with CoR-Forum account</a>
     <?php endif; ?>
 </div>
 
