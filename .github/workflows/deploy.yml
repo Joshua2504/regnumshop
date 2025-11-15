@@ -25,7 +25,7 @@ jobs:
 
       - name: Fix permissions on server
         run: |
-          ssh root@cor-forum.de 'cd /root/docker/corforum/regnumshop && mkdir -p database && chmod 775 database/ && find . -type f -name "*.php" -exec chmod 644 {} \;'
+            ssh root@cor-forum.de 'cd /root/docker/corforum/regnumshop && mkdir -p database && chmod 777 database/'
 
       - name: Restart Docker services
         run: |

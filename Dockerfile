@@ -17,17 +17,8 @@ RUN echo "session.cookie_httponly = 1" >> /usr/local/etc/php/conf.d/security.ini
 
 # Create entrypoint script
 RUN echo '#!/bin/bash\n\
-# Fix permissions for the database directory\n\
-mkdir -p /var/www/html/database\n\
-chown -R www-data:www-data /var/www/html\n\
-chmod -R 755 /var/www/html\n\
-chmod 775 /var/www/html/database\n\
-\n\
 # Start PHP-FPM\n\
 exec php-fpm' > /entrypoint.sh \
     && chmod +x /entrypoint.sh
-
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html
 
 ENTRYPOINT ["/entrypoint.sh"]
